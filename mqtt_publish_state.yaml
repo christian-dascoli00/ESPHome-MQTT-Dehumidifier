@@ -1,0 +1,27 @@
+script:
+  - id: publish_full_state
+    then:
+    
+      - mqtt.publish:
+          topic: dehumidifier/state
+          payload: !lambda 'return id(state).state ? "ON" : "OFF";'
+ 
+      - mqtt.publish:
+          topic: dehumidifier/mode_state
+          payload: !lambda |-
+            return id(mode).current_option();
+ 
+      - mqtt.publish:
+          topic: dehumidifier/target_hum_state
+          payload: !lambda 'return to_string((int)roundf(id(target_humidity).state));'
+ 
+      - mqtt.publish:
+          topic: dehumidifier/fan_speed_state
+          payload: !lambda 'return id(fan_speed).current_option();'
+
+      - mqtt.publish:
+          topic: dehumidifier/action
+          payload: !lambda |-
+            if (!id(state).state) return std::string("off");
+            if (id(heat_pump).state) return std::string("drying");
+            return std::string("idle");

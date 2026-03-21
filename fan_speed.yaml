@@ -1,0 +1,21 @@
+select:
+  - platform: template
+    name: "Dehumidifier Fan Speed"
+    id: fan_speed
+    options:
+      - "low"
+      - "high"
+    optimistic: true
+    on_value:
+      then:
+        - switch.control: 
+            id: fan_high
+            state: !lambda 'return x == "high";'
+        - script.execute: publish_full_state
+
+
+switch:
+  - platform: gpio
+    pin: ${fan_speed_relay}
+    id: fan_high
+    restore_mode: RESTORE_DEFAULT_ON

@@ -1,0 +1,37 @@
+script:
+  - id: apply_logic
+    then:
+      - lambda: |-
+          if (!id(state).state) {
+            id(heat_pump).turn_off();
+            id(fan).turn_off();
+            return;
+          }
+  
+          float hum = id(humidity).state;
+          float target = id(target_humidity).state;
+          std::string current_mode = id(mode).current_option();
+  
+          // ── AUTO ──────────────────────────────────────────────────────────
+
+          if (current_mode == "auto") {
+            if (hum > (target + 3.0f)) {
+              id(heat_pump).turn_on();
+              id(fan).turn_on();
+            } else if (hum < (target - 3.0f)) {
+              id(heat_pump).turn_off();
+              id(fan).turn_off();
+            }
+          }
+  
+          // ── LAUNDRY (ALWAYS ON) ───────────────────────────────────────────
+          else if (current_mode == "laundry") {
+            id(heat_pump).turn_on();
+            id(fan).turn_on();
+          }
+  
+          // ── VENTILATION ───────────────────────────────────────────────────
+          else if (current_mode == "ventilation") {
+            id(heat_pump).turn_off();
+            id(fan).turn_on();
+          }

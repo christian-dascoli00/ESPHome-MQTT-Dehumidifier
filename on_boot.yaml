@@ -1,0 +1,21 @@
+- priority: 300
+  then:
+    - lambda: |-
+        if (id(fan_high).state) {
+          id(fan_speed).publish_state("high");
+        } else {
+          id(fan_speed).publish_state("low");
+        }
+    - binary_sensor.template.publish:
+        id: defrosting
+        state: false
+        
+
+
+- priority: -100
+  then:
+    - wait_until:
+        mqtt.connected:
+    - script.execute: publish_discovery
+    - delay: 500ms
+    - script.execute: publish_full_state  

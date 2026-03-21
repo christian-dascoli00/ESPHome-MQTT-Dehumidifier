@@ -1,0 +1,78 @@
+packages:
+  - !include config.yaml
+  - !include i2c_sensor.yaml
+  - !include mqtt_discovery.yaml
+  - !include mqtt_publish_state.yaml
+  - !include apply_logic.yaml
+  - !include mode.yaml
+  - !include fan_speed.yaml
+
+
+esphome:
+  name: dehumidifier
+  on_boot: !include on_boot.yaml
+
+substitutions:
+  heat_pump_relay: GPIO32
+  fan_speed_relay: GPIO25
+  fan_relay: GPIO33
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+
+mqtt:
+  broker: !secret mqtt_host
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  client_id: dehumidifier
+  discover_ip: false
+  discovery: false
+  on_message: !include mqtt_on_message.yaml
+
+
+
+switch:
+
+  - platform: template
+    id: state
+    name: "Dehumidifier State"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_state:
+      then:
+        - script.execute: apply_logic
+        - script.execute: publish_full_state
+
+
+  - platform: gpio
+    pin: ${fan_relay}
+    id: fan
+    restore_mode: RESTORE_DEFAULT_OFF
+
+
+  - platform: template
+    id: heat_pump
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+
+
+number: 
+  - platform: template
+    id: target_humidity
+    optimistic: true
+    name: "Target Humidity"
+    min_value: 30.0
+    max_value: 80.0
+    restore_value: yes
+    initial_value: 55.0
+    step: 1.0
+    on_value:
+      then:
+        - script.execute: apply_logic
+        - script.execute: publish_full_state
+
+

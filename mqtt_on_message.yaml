@@ -1,0 +1,33 @@
+# ON / OFF
+- topic: dehumidifier/command
+  then:
+    - switch.control:
+        id: state
+        state: !lambda |-
+          return x == "ON";
+
+
+# Mode
+- topic: dehumidifier/mode_command
+  then:
+    - lambda: |-
+        id(mode).make_call().set_option(x).perform();
+
+
+
+# Target humidity
+- topic: dehumidifier/target_hum_cmd
+  then:
+    - lambda: |-
+        float val = atof(x.c_str());
+        if (val < 30.0f) val = 30.0f;
+        if (val > 80.0f) val = 80.0f;
+        id(target_humidity).make_call().set_value(val).perform();
+
+
+
+# Fan speed
+- topic: dehumidifier/fan_speed_cmd
+  then:
+    - lambda: |-
+        id(fan_speed).make_call().set_option(x).perform();

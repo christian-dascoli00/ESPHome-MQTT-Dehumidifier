@@ -1,0 +1,45 @@
+script:
+  - id: publish_discovery
+    then:
+      - mqtt.publish:
+          topic: homeassistant/device/dehumidifier/config
+          retain: true
+          payload: !lambda |-
+            return R"JSON({
+              "dev": {
+                "ids":  "PB-D-23-EU",
+                "name": "Dehumidifier"
+              },
+              "o": {
+                "name": "ESPHome"
+              },
+              "availability_topic": "dehumidifier/status", 
+              "cmps": {
+                "dehumidifier": {
+                  "p":                             "humidifier",
+                  "device_class":                  "dehumidifier",
+                  "unique_id":                     "dehumidifier_pb_d_23_eu",
+                  "name":                          "Dehumidifier",
+                  "state_topic":                   "dehumidifier/state",
+                  "command_topic":                 "dehumidifier/command",
+                  "current_humidity_topic":        "dehumidifier/current_hum",
+                  "target_humidity_state_topic":   "dehumidifier/target_hum_state",
+                  "target_humidity_command_topic": "dehumidifier/target_hum_cmd",
+                  "min_humidity": 30,
+                  "max_humidity": 80,
+                  "mode_state_topic":              "dehumidifier/mode_state",
+                  "mode_command_topic":            "dehumidifier/mode_command",
+                  "modes":                         ["auto", "laundry", "ventilation"],
+                  "action_topic":                  "dehumidifier/action",
+                  "optimistic":                    false
+                },
+                "fan_speed": {
+                  "p":             "select",
+                  "unique_id":     "fan_speed_pb_d_23_eu",
+                  "name":          "Dehumidifier Fan Speed",
+                  "state_topic":   "dehumidifier/fan_speed_state",
+                  "command_topic": "dehumidifier/fan_speed_cmd",
+                  "options":       ["low", "high"]
+                }
+              }
+            })JSON";

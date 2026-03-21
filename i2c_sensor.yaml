@@ -1,0 +1,22 @@
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+  id: bus_a
+
+sensor:
+  - platform: shtcx
+    update_interval: 60s
+    temperature:
+      name: "Temperature"
+      id: temperature
+    humidity:
+      name: "Humidity"
+      id: humidity
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/current_hum
+              payload: !lambda 'return to_string((int)roundf(x));'
+          - script.execute: apply_logic
+          - script.execute: publish_full_state
