@@ -1,0 +1,24 @@
+binary_sensor:
+  - platform: template
+    id: defrosting
+    name: "Defrosting"
+
+
+script:
+  - id: defrost_timer
+    mode: restart
+    then:
+      - delay: 1h
+      - binary_sensor.template.publish:
+          id: defrosting
+          state: true
+      - switch.turn_off: heat_pump_raw
+      - delay: 5min
+      - binary_sensor.template.publish:
+          id: defrosting
+          state: false
+      - if:
+          condition:
+            switch.is_on: heat_pump
+          then:
+            - switch.turn_on: heat_pump_raw

@@ -8,7 +8,9 @@ script:
             return R"JSON({
               "dev": {
                 "ids":  "PB-D-23-EU",
-                "name": "Dehumidifier"
+                "name": "Dehumidifier",
+                "mf": "ProBreeze",
+                "mdl": "PB-D-23-EU"
               },
               "o": {
                 "name": "ESPHome"
@@ -36,10 +38,24 @@ script:
                 "fan_speed": {
                   "p":             "select",
                   "unique_id":     "fan_speed_pb_d_23_eu",
-                  "name":          "Dehumidifier Fan Speed",
+                  "name":          "Fan Speed",
                   "state_topic":   "dehumidifier/fan_speed_state",
                   "command_topic": "dehumidifier/fan_speed_cmd",
                   "options":       ["low", "high"]
+                },
+                "heat_pump": {
+                  "p":             "binary_sensor",
+                  "unique_id":     "heat_pump_pb_d_23_eu",
+                  "name":          "Heat Pump",
+                  "state_topic":   "dehumidifier/heat_pump_state",
+                  "entity_category": "diagnostic"
+                },
+                "defrosting": {
+                  "p":             "binary_sensor",
+                  "unique_id":     "defrosting_pb_d_23_eu",
+                  "name":          "Defrosting",
+                  "state_topic":   "dehumidifier/defrosting_state",
+                  "entity_category": "diagnostic"
                 }
               }
             })JSON";
