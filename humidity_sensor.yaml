@@ -1,0 +1,39 @@
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+  id: bus_a
+
+sensor:
+  - platform: shtcx
+    update_interval: 60s
+    humidity:
+      name: "Internal Humidity"
+      id: internal_humidity
+      on_value:
+        then:
+          - component.update: humidity
+
+  - platform: mqtt_subscribe
+    id: external_humidity
+    name: "External Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
+    topic: dehumidifier/external_hum
+
+switch:
+  - platform: template
+    id: use_external_humidity_sensor
+    name: "Use External Sensor"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - mqtt.publish:
+          topic: dehumidifier/use_external_humidity_sensor_state
+          payload: "ON"
+      - component.update: humidity
+    on_turn_off:
+      - mqtt.publish:
+          topic: dehumidifier/use_external_humidity_sensor_state
+          payload: "OFF"
+      - component.update: humidity

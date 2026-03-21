@@ -1,6 +1,6 @@
 packages:
   - !include config.yaml
-  - !include i2c_sensor.yaml
+  - !include humidity_sensor.yaml
   - !include mqtt_discovery.yaml
   - !include mqtt_publish_state.yaml
   - !include apply_logic.yaml
@@ -24,7 +24,6 @@ wifi:
   password: !secret wifi_password
 
 
-
 mqtt:
   broker: !secret mqtt_host
   username: !secret mqtt_username
@@ -35,13 +34,6 @@ mqtt:
   on_message: !include mqtt_on_message.yaml
 
 sensor:
-  - platform: mqtt_subscribe
-    id: external_humidity
-    name: "External Humidity"
-    device_class: humidity
-    unit_of_measurement: "%"
-    topic: dehumidifier/external_hum
-
   - platform: template
     id: humidity
     lambda: |-
@@ -60,22 +52,6 @@ sensor:
 
 
 switch:
-
-  - platform: template
-    id: use_external_humidity_sensor
-    name: "Use External Sensor"
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    on_turn_on:
-      - mqtt.publish:
-          topic: dehumidifier/use_external_humidity_sensor_state
-          payload: "ON"
-      - component.update: humidity
-    on_turn_off:
-      - mqtt.publish:
-          topic: dehumidifier/use_external_humidity_sensor_state
-          payload: "OFF"
-      - component.update: humidity
 
   - platform: template
     id: state
