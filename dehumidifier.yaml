@@ -1,17 +1,17 @@
 packages:
-  - !include config.yaml
-  - !include humidity_sensor.yaml
-  - !include mqtt_discovery.yaml
-  - !include mqtt_publish_state.yaml
-  - !include apply_logic.yaml
-  - !include defrosting.yaml
-  - !include mode.yaml
-  - !include fan.yaml
+  - !include packages/config.yaml
+  - !include packages/humidity_sensor.yaml
+  - !include packages/mqtt_discovery.yaml
+  - !include packages/mqtt_publish_state.yaml
+  - !include packages/apply_logic.yaml
+  - !include packages/defrosting.yaml
+  - !include packages/mode.yaml
+  - !include packages/fan.yaml
 
 
 esphome:
   name: dehumidifier
-  on_boot: !include on_boot.yaml
+  on_boot: !include packages/on_boot.yaml
 
 substitutions:
   heat_pump_relay: GPIO32
@@ -31,7 +31,7 @@ mqtt:
   client_id: dehumidifier
   discover_ip: false
   discovery: false
-  on_message: !include mqtt_on_message.yaml
+  on_message: !include packages/mqtt_on_message.yaml
 
 sensor:
   - platform: template
