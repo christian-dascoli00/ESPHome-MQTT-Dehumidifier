@@ -6,7 +6,7 @@ packages:
   - !include apply_logic.yaml
   - !include defrosting.yaml
   - !include mode.yaml
-  - !include fan_speed.yaml
+  - !include fan.yaml
 
 
 esphome:
@@ -64,12 +64,6 @@ switch:
         - script.execute: publish_full_state
 
 
-  - platform: gpio
-    pin: ${fan_relay}
-    id: fan
-    restore_mode: RESTORE_DEFAULT_OFF
-
-
   - platform: template
     id: heat_pump
     restore_mode: RESTORE_DEFAULT_OFF
@@ -89,13 +83,15 @@ switch:
     pin: ${heat_pump_relay}
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
-      - script.execute: defrost_timer
+      - script.execute: defrost
     on_turn_off:
       - if:
           condition:
             binary_sensor.is_off: defrosting
           then:
-            - script.stop: defrost_timer
+            - script.stop: defrost
+      - script.execute: fan_force
+      
 
 
 number: 
@@ -114,11 +110,3 @@ number:
       then:
         - script.execute: apply_logic
         - script.execute: publish_full_state
-
-
-binary_sensor:
-  - platform: template
-    id: heat_pump_raw_state
-    name: "Heat Pump"
-    lambda: 'return id(heat_pump_raw).state;'
-    # diagnostic entity

@@ -5,7 +5,7 @@ binary_sensor:
 
 
 script:
-  - id: defrost_timer
+  - id: defrost
     mode: restart
     then:
       - delay: 1h

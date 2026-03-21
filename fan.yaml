@@ -1,0 +1,64 @@
+select:
+  - platform: template
+    name: "Dehumidifier Fan Speed"
+    id: fan_speed
+    options:
+      - "low"
+      - "high"
+    optimistic: true
+    on_value:
+      then:
+        - switch.control:
+            id: fan_high
+            state: !lambda 'return x == "high";'
+        - script.execute: publish_full_state
+
+
+binary_sensor:
+  - platform: template
+    id: fan_forced
+    name: "Fan Forced"
+
+script:
+  - id: fan_force
+    mode: restart
+    then:
+      - binary_sensor.template.publish:
+          id: fan_forced
+          state: true
+      - switch.turn_on: fan_raw
+      - delay: 5min
+      - binary_sensor.template.publish:
+          id: fan_forced
+          state: false
+      - if:
+          condition:
+            switch.is_off: fan
+          then:
+            - switch.turn_off: fan_raw
+
+switch:
+
+  - platform: template
+    id: fan
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - switch.turn_on: fan_raw
+    on_turn_off:
+      - if:
+          condition:
+            binary_sensor.is_off: fan_forced
+          then:
+            - switch.turn_off: fan_raw
+
+
+  - platform: gpio
+    pin: ${fan_speed_relay}
+    id: fan_high
+    restore_mode: RESTORE_DEFAULT_ON
+
+  - platform: gpio
+    pin: ${fan_relay}
+    id: fan_raw
+    restore_mode: RESTORE_DEFAULT_OFF
