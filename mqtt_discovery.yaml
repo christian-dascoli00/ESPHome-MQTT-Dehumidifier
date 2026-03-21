@@ -56,6 +56,25 @@ script:
                   "name":          "Defrosting",
                   "state_topic":   "dehumidifier/defrosting_state",
                   "entity_category": "diagnostic"
+                },
+                "humidity": {
+                  "p":             "sensor",
+                  "unique_id":     "humidity_pb_d_23_eu",
+                  "name":          "Humidity Internal Sensor",
+                  "state_topic":   "dehumidifier/internal_hum",
+                  "device_class": "humidity",
+                  "unit_of_measurement": "%",
+                  "entity_category": "diagnostic"
+                },
+                "use_external_humidity_sensor": {
+                  "p":             "switch",
+                  "unique_id":     "use_external_humidity_sensor_pb_d_23_eu",
+                  "name":          "Use External Humidity Sensor",
+                  "state_topic":   "dehumidifier/use_external_humidity_sensor_state",
+                  "command_topic": "dehumidifier/use_external_humidity_sensor_cmd",
+                  "optimistic":    false,
+                  "icon":          "mdi:cog",
+                  "entity_category": "config"
                 }
               }
             })JSON";

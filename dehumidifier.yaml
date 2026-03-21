@@ -34,9 +34,48 @@ mqtt:
   discovery: false
   on_message: !include mqtt_on_message.yaml
 
+sensor:
+  - platform: mqtt_subscribe
+    id: external_humidity
+    name: "External Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
+    topic: dehumidifier/external_hum
+
+  - platform: template
+    id: humidity
+    lambda: |-
+      if (id(use_external_humidity_sensor).state) {
+        return id(external_humidity).state;
+      } else {
+        return id(internal_humidity).state;
+      }
+    on_value:
+      then:
+        - mqtt.publish:
+            topic: dehumidifier/current_hum
+            payload: !lambda 'return to_string((int)roundf(x));'
+        - script.execute: apply_logic
+        - script.execute: publish_full_state
 
 
 switch:
+
+  - platform: template
+    id: use_external_humidity_sensor
+    name: "Use External Sensor"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - mqtt.publish:
+          topic: dehumidifier/use_external_humidity_sensor_state
+          payload: "ON"
+      - component.update: humidity
+    on_turn_off:
+      - mqtt.publish:
+          topic: dehumidifier/use_external_humidity_sensor_state
+          payload: "OFF"
+      - component.update: humidity
 
   - platform: template
     id: state
@@ -88,6 +127,8 @@ number:
     id: target_humidity
     optimistic: true
     name: "Target Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
     min_value: 30.0
     max_value: 80.0
     restore_value: yes

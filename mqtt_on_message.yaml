@@ -31,3 +31,19 @@
   then:
     - lambda: |-
         id(fan_speed).make_call().set_option(x).perform();
+
+
+
+# Use external humidity sensor
+- topic: dehumidifier/use_external_humidity_sensor_cmd
+  then:
+    - switch.control:
+        id: use_external_humidity_sensor
+        state: !lambda |-
+          return x == "ON";
+
+
+# Update external humidity sensor
+- topic: dehumidifier/external_hum
+  then:
+    - component.update: humidity

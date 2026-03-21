@@ -33,3 +33,11 @@ script:
       - mqtt.publish:
           topic: dehumidifier/defrosting_state
           payload: !lambda 'return id(defrosting).state ? "ON" : "OFF";'
+
+      - mqtt.publish:
+          topic: dehumidifier/use_external_humidity_sensor_state
+          payload: !lambda 'return id(use_external_humidity_sensor).state ? "ON" : "OFF";'
+
+      - mqtt.publish:
+          topic: dehumidifier/internal_hum
+          payload: !lambda 'return to_string((int)roundf(id(internal_humidity).state));'
