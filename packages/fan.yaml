@@ -8,6 +8,8 @@ select:
     web_server:
       sorting_weight: 2
     optimistic: true
+    initial_option: "high"
+    restore_value: yes
     on_value:
       then:
         - switch.control:
@@ -61,7 +63,6 @@ switch:
   - platform: template
     id: fan
     optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
     turn_on_action:
       - switch.turn_on: fan_raw
     turn_off_action:
@@ -74,11 +75,13 @@ switch:
 
 
   - platform: gpio
-    pin: ${fan_speed_relay}
+    pin: 
+      number: ${fan_speed_relay}
+      inverted: true
     id: fan_high
-    restore_mode: RESTORE_DEFAULT_ON
 
   - platform: gpio
-    pin: ${fan_relay}
+    pin: 
+      number: ${fan_relay}
+      inverted: true
     id: fan_raw
-    restore_mode: RESTORE_DEFAULT_OFF

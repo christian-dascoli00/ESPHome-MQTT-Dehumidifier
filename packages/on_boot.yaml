@@ -1,10 +1,10 @@
 - priority: 300
   then:
     - lambda: |-
-        if (id(fan_high).state) {
-          id(fan_speed).publish_state("high");
+        if (id(fan_speed).current_option() == "high") {
+          id(fan_high).turn_on();
         } else {
-          id(fan_speed).publish_state("low");
+          id(fan_high).turn_off();
         }
     - binary_sensor.template.publish:
         id: defrosting
@@ -12,7 +12,6 @@
     - binary_sensor.template.publish:
         id: fan_forced
         state: false
-        
 
 
 - priority: -100

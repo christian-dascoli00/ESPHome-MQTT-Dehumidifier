@@ -22,7 +22,6 @@ switch:
 
   - platform: template
     id: heat_pump
-    restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
     turn_on_action:
       - if:
@@ -36,8 +35,9 @@ switch:
 
   - platform: gpio
     id: heat_pump_raw
-    pin: ${heat_pump_relay}
-    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      number: ${heat_pump_relay}
+      inverted: true
     on_turn_on:
       - script.execute: defrost
       - script.stop: fan_force
