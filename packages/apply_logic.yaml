@@ -1,5 +1,6 @@
 script:
   - id: apply_logic
+    mode: queued
     then:
       - lambda: |-
           if (!id(state).state) {

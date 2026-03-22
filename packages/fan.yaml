@@ -46,6 +46,7 @@ switch:
     turn_on_action:
       - switch.turn_on: fan_raw
     turn_off_action:
+      - delay: 1s # Wait for heat_pump_raw on_turn_off to trigger fan_force first
       - if:
           condition:
             binary_sensor.is_off: fan_forced

@@ -89,12 +89,13 @@ switch:
           id: fan_forced
           state: false
     on_turn_off:
+      - script.execute: fan_force
       - if:
           condition:
             binary_sensor.is_off: defrosting
           then:
             - script.stop: defrost
-      - script.execute: fan_force
+      
       
 
 
