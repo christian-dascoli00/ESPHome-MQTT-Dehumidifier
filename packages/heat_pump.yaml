@@ -1,0 +1,71 @@
+script:
+  - id: defrost
+    mode: restart
+    then:
+      - delay: 45min
+      - binary_sensor.template.publish:
+          id: defrosting
+          state: true
+      - switch.turn_off: heat_pump_raw
+      - delay: 5min
+      - binary_sensor.template.publish:
+          id: defrosting
+          state: false
+      - if:
+          condition:
+            switch.is_on: heat_pump
+          then:
+            - switch.turn_on: heat_pump_raw
+
+
+switch:
+
+  - platform: template
+    id: heat_pump
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    turn_on_action:
+      - if:
+          condition:
+            binary_sensor.is_off: defrosting
+          then:
+            - switch.turn_on: heat_pump_raw
+    turn_off_action:
+      - switch.turn_off: heat_pump_raw
+
+
+  - platform: gpio
+    id: heat_pump_raw
+    pin: ${heat_pump_relay}
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - script.execute: defrost
+      - script.stop: fan_force
+      - binary_sensor.template.publish:
+          id: fan_forced
+          state: false
+    on_turn_off:
+      - script.execute: fan_force
+      - if:
+          condition:
+            binary_sensor.is_off: defrosting
+          then:
+            - script.stop: defrost
+
+
+binary_sensor:
+
+  - platform: template
+    id: heat_pump_state
+    name: "Heat Pump"
+    entity_category: diagnostic
+    lambda: |-
+      if (id(heat_pump_raw).state) {
+        return true;
+      } else {
+        return false;
+      }
+
+  - platform: template
+    id: defrosting
+    name: "Defrosting"

@@ -1,6 +1,6 @@
 i2c:
-  sda: GPIO21
-  scl: GPIO22
+  sda: ${i2c_sda}
+  scl: ${i2c_scl}
   scan: true
   id: bus_a
 
@@ -20,6 +20,23 @@ sensor:
     device_class: humidity
     unit_of_measurement: "%"
     topic: dehumidifier/external_hum
+
+
+  - platform: template
+    id: humidity
+    lambda: |-
+      if (id(use_external_humidity_sensor).state) {
+        return id(external_humidity).state;
+      } else {
+        return id(internal_humidity).state;
+      }
+    on_value:
+      then:
+        - mqtt.publish:
+            topic: dehumidifier/current_hum
+            payload: !lambda 'return to_string((int)roundf(x));'
+        - script.execute: apply_logic
+        - script.execute: publish_full_state
 
 switch:
   - platform: template

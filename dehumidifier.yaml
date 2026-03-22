@@ -1,129 +1,26 @@
-packages:
-  - !include packages/config.yaml
-  - !include packages/humidity_sensor.yaml
-  - !include packages/mqtt_discovery.yaml
-  - !include packages/mqtt_publish_state.yaml
-  - !include packages/apply_logic.yaml
-  - !include packages/defrosting.yaml
-  - !include packages/mode.yaml
-  - !include packages/fan.yaml
-
-
-esphome:
-  name: dehumidifier
-  on_boot: !include packages/on_boot.yaml
-
 substitutions:
-  heat_pump_relay: GPIO32
-  fan_speed_relay: GPIO25
-  fan_relay: GPIO33
 
+  # Identifiers
+  device_id: "PB-D-23-EU"
+  entity_id: "pb_d_23_eu"
+  device_name: "Dehumidifier"
+  dehumidifier_entity_name: "Dehumidifier"
+  manufacturer: "ProBreeze"
+  model: "PB-D-23-EU"
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  # GPIOs
+  heat_pump_relay: GPIO32   # relay to turn heat pump on/off
+  fan_speed_relay: GPIO25   # SPDT relay for fan speed control (high/low)
+  fan_relay: GPIO33         # relay to turn fan on/off
+  i2c_sda: GPIO21           # humidity sensor SDA
+  i2c_scl: GPIO22           # humidity sensor SCL
+  
 
-
-mqtt:
-  broker: !secret mqtt_host
-  username: !secret mqtt_username
-  password: !secret mqtt_password
-  client_id: dehumidifier
-  discover_ip: false
-  discovery: false
-  on_message: !include packages/mqtt_on_message.yaml
-
-sensor:
-  - platform: template
-    id: humidity
-    lambda: |-
-      if (id(use_external_humidity_sensor).state) {
-        return id(external_humidity).state;
-      } else {
-        return id(internal_humidity).state;
-      }
-    on_value:
-      then:
-        - mqtt.publish:
-            topic: dehumidifier/current_hum
-            payload: !lambda 'return to_string((int)roundf(x));'
-        - script.execute: apply_logic
-        - script.execute: publish_full_state
-
-
-switch:
-
-  - platform: template
-    id: state
-    name: "Dehumidifier State"
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    on_state:
-      then:
-        - script.execute: apply_logic
-        - script.execute: publish_full_state
-
-
-  - platform: template
-    id: heat_pump
-    restore_mode: RESTORE_DEFAULT_OFF
-    optimistic: true
-    turn_on_action:
-      - if:
-          condition:
-            binary_sensor.is_off: defrosting
-          then:
-            - switch.turn_on: heat_pump_raw
-    turn_off_action:
-      - switch.turn_off: heat_pump_raw
-
-
-  - platform: gpio
-    id: heat_pump_raw
-    pin: ${heat_pump_relay}
-    restore_mode: RESTORE_DEFAULT_OFF
-    on_turn_on:
-      - script.execute: defrost
-      - script.stop: fan_force
-      - binary_sensor.template.publish:
-          id: fan_forced
-          state: false
-    on_turn_off:
-      - script.execute: fan_force
-      - if:
-          condition:
-            binary_sensor.is_off: defrosting
-          then:
-            - script.stop: defrost
-      
-      
-
-
-number: 
-  - platform: template
-    id: target_humidity
-    optimistic: true
-    name: "Target Humidity"
-    device_class: humidity
-    unit_of_measurement: "%"
-    min_value: 30.0
-    max_value: 80.0
-    restore_value: yes
-    initial_value: 55.0
-    step: 1.0
-    on_value:
-      then:
-        - script.execute: apply_logic
-        - script.execute: publish_full_state
-
-binary_sensor:
-  - platform: template
-    id: heat_pump_state
-    name: "Heat Pump"
-    entity_category: diagnostic
-    lambda: |-
-      if (id(heat_pump_raw).state) {
-        return true;
-      } else {
-        return false;
-      }
+packages:
+  - !include packages/mqtt/discovery.yaml
+  - !include packages/mqtt/publish_state.yaml
+  - !include packages/config.yaml
+  - !include packages/humidity.yaml
+  - !include packages/logic.yaml
+  - !include packages/heat_pump.yaml
+  - !include packages/fan.yaml

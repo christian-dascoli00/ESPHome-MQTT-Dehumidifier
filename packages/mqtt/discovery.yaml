@@ -7,10 +7,10 @@ script:
           payload: !lambda |-
             return R"JSON({
               "dev": {
-                "ids":  "PB-D-23-EU",
-                "name": "Dehumidifier",
-                "mf": "ProBreeze",
-                "mdl": "PB-D-23-EU"
+                "ids": "${device_id}",
+                "name": "${device_name}",
+                "mf": "${manufacturer}",
+                "mdl": "${model}"
               },
               "o": {
                 "name": "ESPHome"
@@ -20,8 +20,8 @@ script:
                 "dehumidifier": {
                   "p":                             "humidifier",
                   "device_class":                  "dehumidifier",
-                  "unique_id":                     "dehumidifier_pb_d_23_eu",
-                  "name":                          "Dehumidifier",
+                  "unique_id":                     "dehumidifier_${entity_id}",
+                  "name":                          "${dehumidifier_entity_name}",
                   "state_topic":                   "dehumidifier/state",
                   "command_topic":                 "dehumidifier/command",
                   "current_humidity_topic":        "dehumidifier/current_hum",
@@ -37,7 +37,7 @@ script:
                 },
                 "fan_speed": {
                   "p":             "select",
-                  "unique_id":     "fan_speed_pb_d_23_eu",
+                  "unique_id":     "fan_speed_${entity_id}",
                   "name":          "Fan Speed",
                   "state_topic":   "dehumidifier/fan_speed_state",
                   "command_topic": "dehumidifier/fan_speed_cmd",
@@ -45,35 +45,35 @@ script:
                 },
                 "heat_pump": {
                   "p":             "binary_sensor",
-                  "unique_id":     "heat_pump_pb_d_23_eu",
+                  "unique_id":     "heat_pump_${entity_id}",
                   "name":          "Heat Pump",
                   "state_topic":   "dehumidifier/heat_pump_state",
                   "entity_category": "diagnostic"
                 },
                 "fan": {
                   "p":             "binary_sensor",
-                  "unique_id":     "fan_pb_d_23_eu",
+                  "unique_id":     "fan_${entity_id}",
                   "name":          "Fan",
                   "state_topic":   "dehumidifier/fan_state",
                   "entity_category": "diagnostic"
                 },
                 "fan_forced": {
                   "p":             "binary_sensor",
-                  "unique_id":     "fan_forced_pb_d_23_eu",
+                  "unique_id":     "fan_forced_${entity_id}",
                   "name":          "Fan Forced",
                   "state_topic":   "dehumidifier/fan_forced_state",
                   "entity_category": "diagnostic"
                 },
                 "defrosting": {
                   "p":             "binary_sensor",
-                  "unique_id":     "defrosting_pb_d_23_eu",
+                  "unique_id":     "defrosting_${entity_id}",
                   "name":          "Defrosting",
                   "state_topic":   "dehumidifier/defrosting_state",
                   "entity_category": "diagnostic"
                 },
                 "humidity": {
                   "p":             "sensor",
-                  "unique_id":     "humidity_pb_d_23_eu",
+                  "unique_id":     "humidity_${entity_id}",
                   "name":          "Humidity Internal Sensor",
                   "state_topic":   "dehumidifier/internal_hum",
                   "device_class": "humidity",
@@ -82,7 +82,7 @@ script:
                 },
                 "use_external_humidity_sensor": {
                   "p":             "switch",
-                  "unique_id":     "use_external_humidity_sensor_pb_d_23_eu",
+                  "unique_id":     "use_external_humidity_sensor_${entity_id}",
                   "name":          "Use External Humidity Sensor",
                   "state_topic":   "dehumidifier/use_external_humidity_sensor_state",
                   "command_topic": "dehumidifier/use_external_humidity_sensor_cmd",
