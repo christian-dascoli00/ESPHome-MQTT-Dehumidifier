@@ -43,9 +43,9 @@ switch:
     id: fan
     optimistic: true
     restore_mode: RESTORE_DEFAULT_OFF
-    on_turn_on:
+    turn_on_action:
       - switch.turn_on: fan_raw
-    on_turn_off:
+    turn_off_action:
       - if:
           condition:
             binary_sensor.is_off: fan_forced
