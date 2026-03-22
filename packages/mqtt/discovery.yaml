@@ -41,6 +41,7 @@ script:
                   "name":          "Fan Speed",
                   "state_topic":   "dehumidifier/fan_speed_state",
                   "command_topic": "dehumidifier/fan_speed_cmd",
+                  "icon":          "mdi:fan",
                   "options":       ["low", "high"]
                 },
                 "heat_pump": {
@@ -48,6 +49,7 @@ script:
                   "unique_id":     "heat_pump_${entity_id}",
                   "name":          "Heat Pump",
                   "state_topic":   "dehumidifier/heat_pump_state",
+                  "icon":          "mdi:heating-coil",
                   "entity_category": "diagnostic"
                 },
                 "fan": {
@@ -55,6 +57,7 @@ script:
                   "unique_id":     "fan_${entity_id}",
                   "name":          "Fan",
                   "state_topic":   "dehumidifier/fan_state",
+                  "icon":          "mdi:fan",
                   "entity_category": "diagnostic"
                 },
                 "fan_forced": {
@@ -68,6 +71,7 @@ script:
                   "p":             "binary_sensor",
                   "unique_id":     "defrosting_${entity_id}",
                   "name":          "Defrosting",
+                  "icon":          "mdi:snowflake",
                   "state_topic":   "dehumidifier/defrosting_state"
                 },
                 "humidity": {
@@ -77,6 +81,7 @@ script:
                   "state_topic":   "dehumidifier/internal_hum",
                   "device_class": "humidity",
                   "unit_of_measurement": "%",
+                  "icon":          "mdi:water-percent",
                   "entity_category": "diagnostic"
                 },
                 "use_external_humidity_sensor": {
