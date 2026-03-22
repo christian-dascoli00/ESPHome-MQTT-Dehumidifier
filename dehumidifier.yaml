@@ -115,3 +115,15 @@ number:
       then:
         - script.execute: apply_logic
         - script.execute: publish_full_state
+
+binary_sensor:
+  - platform: template
+    id: heat_pump_state
+    name: "Heat Pump"
+    entity_category: diagnostic
+    lambda: |-
+      if (id(heat_pump_raw).state) {
+        return true;
+      } else {
+        return false;
+      }

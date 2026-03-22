@@ -14,11 +14,6 @@ select:
         - script.execute: publish_full_state
 
 
-binary_sensor:
-  - platform: template
-    id: fan_forced
-    name: "Fan Forced"
-
 script:
   - id: fan_force
     mode: restart
@@ -36,6 +31,23 @@ script:
             switch.is_off: fan
           then:
             - switch.turn_off: fan_raw
+
+binary_sensor:
+
+  - platform: template
+    id: fan_forced
+    name: "Fan Forced"
+
+  - platform: template
+    id: fan_state
+    name: "Fan"
+    entity_category: diagnostic
+    lambda: |-
+      if (id(fan_raw).state) {
+        return true;
+      } else {
+        return false;
+      }
 
 switch:
 
