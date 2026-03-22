@@ -10,6 +10,8 @@ sensor:
     humidity:
       name: "Internal Humidity"
       id: internal_humidity
+      web_server:
+        sorting_weight: 4
       on_value:
         then:
           - component.update: humidity
@@ -20,6 +22,8 @@ sensor:
     device_class: humidity
     unit_of_measurement: "%"
     topic: dehumidifier/external_hum
+    web_server:
+      sorting_weight: 5
 
 
   - platform: template
@@ -43,6 +47,9 @@ switch:
     id: use_external_humidity_sensor
     name: "Use External Sensor"
     optimistic: true
+    web_server:
+      sorting_weight: 6
+    entity_category: config
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       - mqtt.publish:

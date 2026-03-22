@@ -68,8 +68,7 @@ script:
                   "p":             "binary_sensor",
                   "unique_id":     "defrosting_${entity_id}",
                   "name":          "Defrosting",
-                  "state_topic":   "dehumidifier/defrosting_state",
-                  "entity_category": "diagnostic"
+                  "state_topic":   "dehumidifier/defrosting_state"
                 },
                 "humidity": {
                   "p":             "sensor",

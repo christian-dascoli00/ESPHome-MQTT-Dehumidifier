@@ -59,6 +59,8 @@ binary_sensor:
     id: heat_pump_state
     name: "Heat Pump"
     entity_category: diagnostic
+    web_server:
+      sorting_weight: 0
     lambda: |-
       if (id(heat_pump_raw).state) {
         return true;
@@ -69,3 +71,5 @@ binary_sensor:
   - platform: template
     id: defrosting
     name: "Defrosting"
+    web_server:
+      sorting_weight: 7

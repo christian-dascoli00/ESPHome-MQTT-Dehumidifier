@@ -5,6 +5,8 @@ select:
     options:
       - "low"
       - "high"
+    web_server:
+      sorting_weight: 2
     optimistic: true
     on_value:
       then:
@@ -37,10 +39,15 @@ binary_sensor:
   - platform: template
     id: fan_forced
     name: "Fan Forced"
+    web_server:
+      sorting_weight: 2
+    entity_category: diagnostic
 
   - platform: template
     id: fan_state
     name: "Fan"
+    web_server:
+      sorting_weight: 1
     entity_category: diagnostic
     lambda: |-
       if (id(fan_raw).state) {

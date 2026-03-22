@@ -3,6 +3,8 @@ select:
     name: "Dehumidifier Mode"
     id: mode
     optimistic: true
+    web_server:
+      sorting_weight: 1
     options:
       - "auto"
       - "laundry"
@@ -20,6 +22,8 @@ switch:
   - platform: template
     id: state
     name: "Dehumidifier State"
+    web_server:
+      sorting_weight: 0
     optimistic: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_state:
@@ -35,6 +39,8 @@ number:
     id: target_humidity
     optimistic: true
     name: "Target Humidity"
+    web_server:
+      sorting_weight: 3
     device_class: humidity
     unit_of_measurement: "%"
     min_value: 30.0
