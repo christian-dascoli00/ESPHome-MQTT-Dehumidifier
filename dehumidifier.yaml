@@ -12,6 +12,7 @@ substitutions:
   heat_pump_relay: GPIO32   # relay to turn heat pump on/off
   fan_speed_relay: GPIO25   # SPDT relay for fan speed control (high/low)
   fan_relay: GPIO33         # relay to turn fan on/off
+  tank_full_sensor: GPIO26  # tank full sensor
   i2c_sda: GPIO21           # humidity sensor SDA
   i2c_scl: GPIO22           # humidity sensor SCL
   

@@ -92,3 +92,18 @@ binary_sensor:
     web_server:
       sorting_weight: 7
 
+  - platform: gpio
+    id: tank_full
+    name: "Tank Full"
+    web_server:
+      sorting_weight: 8
+    pin:
+      number: ${tank_full_sensor}
+      mode: INPUT_PULLUP
+    on_press:
+      - switch.turn_off: heat_pump
+      - switch.turn_off: fan
+      - script.execute: publish_full_state
+    on_release:
+      - script.execute: apply_logic
+      - script.execute: publish_full_state

@@ -93,6 +93,13 @@ script:
                   "optimistic":    false,
                   "icon":          "mdi:cog",
                   "entity_category": "config"
+                },
+                "tank_full": {
+                  "p":             "binary_sensor",
+                  "unique_id":     "tank_full_${entity_id}",
+                  "name":          "Tank Full",
+                  "state_topic":   "dehumidifier/tank_full_state",
+                  "icon":          "mdi:format-color-fill"
                 }
               }
             })JSON";

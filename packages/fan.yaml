@@ -42,14 +42,14 @@ binary_sensor:
     id: fan_forced
     name: "Fan Forced"
     web_server:
-      sorting_weight: 2
+      sorting_weight: 4
     entity_category: diagnostic
 
   - platform: template
     id: fan_state
     name: "Fan"
     web_server:
-      sorting_weight: 1
+      sorting_weight: 3
     entity_category: diagnostic
     lambda: |-
       if (id(fan_raw).state) {
@@ -62,10 +62,19 @@ switch:
 
   - platform: template
     id: fan
-    optimistic: true
     turn_on_action:
-      - switch.turn_on: fan_raw
+      - if:
+          condition:
+            binary_sensor.is_off: tank_full
+          then:
+            - switch.template.publish:
+                id: fan
+                state: ON
+            - switch.turn_on: fan_raw
     turn_off_action:
+      - switch.template.publish:
+                id: fan
+                state: OFF
       - delay: 1s # Wait for heat_pump_raw on_turn_off to trigger fan_force first
       - if:
           condition:
