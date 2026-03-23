@@ -1,20 +1,20 @@
 substitutions:
 
   # Identifiers
-  device_id: "PB-D-23-EU"
-  entity_id: "pb_d_23_eu"
-  device_name: "Dehumidifier"
-  dehumidifier_entity_name: "Dehumidifier"
-  manufacturer: "ProBreeze"
-  model: "PB-D-23-EU"
+  device_id: <YOUR_DEVICE_ID>
+  entity_id: <YOUR_ENTITY_ID>
+  device_name: <YOUR_DEVICE_NAME>
+  dehumidifier_entity_name: <YOUR_DEHUMIDIFIER_ENTITY_NAME>
+  manufacturer: <YOUR_MANUFACTURER>
+  model: <YOUR_MODEL>
 
   # GPIOs
-  heat_pump_relay: GPIO32   # relay to turn heat pump on/off
-  fan_speed_relay: GPIO25   # SPDT relay for fan speed control (high/low)
-  fan_relay: GPIO33         # relay to turn fan on/off
-  tank_full_sensor: GPIO26  # tank full sensor
-  i2c_sda: GPIO21           # humidity sensor SDA
-  i2c_scl: GPIO22           # humidity sensor SCL
+  heat_pump_relay: <GPIO>   # relay to turn heat pump on/off
+  fan_speed_relay: <GPIO>   # SPDT relay for fan speed control (high/low)
+  fan_relay: <GPIO>         # relay to turn fan on/off
+  tank_full_sensor: <GPIO>  # tank full sensor
+  i2c_sda: <GPIO>           # humidity sensor SDA
+  i2c_scl: <GPIO>           # humidity sensor SCL
   
 
 packages:
