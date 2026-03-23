@@ -1,3 +1,9 @@
+globals:
+  - id: boot_completed
+    type: bool
+    initial_value: '0'
+
+
 script:
   - id: defrost
     mode: restart
@@ -22,14 +28,23 @@ switch:
 
   - platform: template
     id: heat_pump
-    optimistic: true
     turn_on_action:
       - if:
           condition:
-            binary_sensor.is_off: defrosting
+            binary_sensor.is_off: tank_full
           then:
-            - switch.turn_on: heat_pump_raw
+            - switch.template.publish:
+                id: heat_pump
+                state: ON
+            - if:
+                condition:
+                  binary_sensor.is_off: defrosting
+                then:
+                  - switch.turn_on: heat_pump_raw
     turn_off_action:
+      - switch.template.publish:
+                id: heat_pump
+                state: OFF
       - switch.turn_off: heat_pump_raw
 
 
@@ -45,13 +60,16 @@ switch:
           id: fan_forced
           state: false
     on_turn_off:
-      - script.execute: fan_force
       - if:
           condition:
-            binary_sensor.is_off: defrosting
+            lambda: 'return id(boot_completed);'
           then:
-            - script.stop: defrost
-
+            - script.execute: fan_force
+            - if:
+                condition:
+                  binary_sensor.is_off: defrosting
+                then:
+                  - script.stop: defrost
 
 binary_sensor:
 
@@ -60,7 +78,7 @@ binary_sensor:
     name: "Heat Pump"
     entity_category: diagnostic
     web_server:
-      sorting_weight: 0
+      sorting_weight: 2
     lambda: |-
       if (id(heat_pump_raw).state) {
         return true;
@@ -73,3 +91,4 @@ binary_sensor:
     name: "Defrosting"
     web_server:
       sorting_weight: 7
+

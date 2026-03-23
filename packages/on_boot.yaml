@@ -12,6 +12,7 @@
     - binary_sensor.template.publish:
         id: fan_forced
         state: false
+    - lambda: 'id(boot_completed) = 1;'
 
 
 - priority: -100
