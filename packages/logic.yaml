@@ -29,9 +29,13 @@ switch:
     optimistic: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_state:
-      then:
-        - script.execute: apply_logic
-        - script.execute: publish_full_state
+      - if:
+          condition:
+            lambda: 'return id(boot_completed);'
+          then:
+            - script.execute: apply_logic
+            - script.execute: publish_full_state
+
 
 
 
