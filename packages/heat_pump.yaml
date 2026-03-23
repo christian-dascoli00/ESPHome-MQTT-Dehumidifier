@@ -13,6 +13,7 @@ script:
           id: defrosting
           state: true
       - switch.turn_off: heat_pump_raw
+      - script.execute: publish_full_state
       - delay: 5min
       - binary_sensor.template.publish:
           id: defrosting
@@ -22,6 +23,7 @@ script:
             switch.is_on: heat_pump
           then:
             - switch.turn_on: heat_pump_raw
+      - script.execute: publish_full_state
 
 
 switch:
