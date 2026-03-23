@@ -2,6 +2,7 @@ select:
   - platform: template
     name: "Dehumidifier Fan Speed"
     id: fan_speed
+    icon: "mdi:fan-chevron-up"
     options:
       - "low"
       - "high"
@@ -41,6 +42,7 @@ binary_sensor:
   - platform: template
     id: fan_forced
     name: "Fan Forced"
+    icon: "mdi:fan-alert"
     web_server:
       sorting_weight: 4
     entity_category: diagnostic
@@ -48,6 +50,7 @@ binary_sensor:
   - platform: template
     id: fan_state
     name: "Fan"
+    icon: "mdi:fan"
     web_server:
       sorting_weight: 3
     entity_category: diagnostic

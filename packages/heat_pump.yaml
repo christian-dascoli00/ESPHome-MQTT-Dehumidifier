@@ -76,6 +76,7 @@ binary_sensor:
   - platform: template
     id: heat_pump_state
     name: "Heat Pump"
+    icon: "mdi:heating-coil"
     entity_category: diagnostic
     web_server:
       sorting_weight: 2
@@ -89,12 +90,14 @@ binary_sensor:
   - platform: template
     id: defrosting
     name: "Defrosting"
+    icon: "mdi:snowflake"
     web_server:
       sorting_weight: 7
 
   - platform: gpio
     id: tank_full
     name: "Tank Full"
+    icon: "mdi:format-color-fill"
     web_server:
       sorting_weight: 8
     pin:

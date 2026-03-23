@@ -2,6 +2,7 @@ select:
   - platform: template
     name: "Dehumidifier Mode"
     id: mode
+    icon: "mdi:autorenew"
     optimistic: true
     web_server:
       sorting_weight: 1
@@ -22,6 +23,7 @@ switch:
   - platform: template
     id: state
     name: "Dehumidifier State"
+    icon: "mdi:power"
     web_server:
       sorting_weight: 0
     optimistic: true
@@ -39,6 +41,7 @@ number:
     id: target_humidity
     optimistic: true
     name: "Target Humidity"
+    icon: "mdi:target-variant"
     web_server:
       sorting_weight: 3
     device_class: humidity
