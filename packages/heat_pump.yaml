@@ -100,6 +100,8 @@ binary_sensor:
     id: tank_full
     name: "Tank Full"
     icon: "mdi:format-color-fill"
+    filters:
+      - delayed_off: 1200ms
     web_server:
       sorting_weight: 8
     pin:
