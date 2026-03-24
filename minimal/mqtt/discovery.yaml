@@ -1,0 +1,26 @@
+script:
+  - id: publish_discovery
+    then:
+      - mqtt.publish:
+          topic: homeassistant/humidifier/${entity_id}/config
+          retain: true
+          # modes must match the options in the select component
+          payload: !lambda |-
+            return R"JSON({
+                  "state_topic":                   "${entity_id}/state",
+                  "command_topic":                 "${entity_id}/command",
+                  "mode_state_topic":              "${entity_id}/mode_state",
+                  "mode_command_topic":            "${entity_id}/mode_command",
+                  "modes":                         ["auto", "laundry", "ventilation"],
+                  "current_humidity_topic":        "${entity_id}/current_hum",
+                  "target_humidity_state_topic":   "${entity_id}/target_hum_state",
+                  "target_humidity_command_topic": "${entity_id}/target_hum_cmd",
+                  "action_topic":                  "${entity_id}/action",
+
+                  "availability_topic":            "dehumidifier/status",
+                  "device_class":                  "dehumidifier",
+                  "unique_id":                     "${entity_id}",
+                  "name":                          "${entity_name}",
+                  "min_humidity": 20,
+                  "max_humidity": 80
+            })JSON";

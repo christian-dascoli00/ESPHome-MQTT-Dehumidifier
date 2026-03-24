@@ -1,0 +1,111 @@
+substitutions:
+
+  # Identifiers used in MQTT topics and discovery payloads
+  entity_id: <YOUR_ENTITY_ID>
+  entity_name: <YOUR_ENTITY_NAME>
+
+packages:
+  discovery: !include mqtt/discovery.yaml
+  publish_state: !include mqtt/publish_state.yaml
+
+
+esphome:
+  name: dehumidifier
+  on_boot:
+      - priority: -100
+        then:
+          - wait_until:
+              mqtt.connected:
+          - script.execute: publish_discovery
+          - delay: 500ms
+          - script.execute: publish_full_state  
+
+
+web_server:
+  port: 80
+
+ota:
+  - platform: esphome
+    password: ""
+
+logger:
+  level: DEBUG
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: arduino
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+mqtt:
+  broker: !secret mqtt_host
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  client_id: dehumidifier
+  discover_ip: false
+  discovery: false
+  on_message: !include mqtt/on_message.yaml
+
+select:
+  - platform: template
+    name: "Dehumidifier Mode"
+    id: mode
+    optimistic: true
+    options:    # Fill with the your modes, reflect these in packages/mqtt/discovery.yaml
+      - "auto"
+      - "laundry"
+      - "ventilation"
+    initial_option: "auto"
+    restore_value: yes
+    on_value:
+      then:
+        - script.execute: publish_full_state
+
+switch:
+  - platform: template # Or your platform, may be GPIO
+    name: "Dehumidifier State" # Used to report in MQTT if the dehumidifier is on or off
+    id: state
+    optimistic: true # Remove if you have actual feedback from the dehumidifier from a GPIO
+    on_state:
+      then:
+        - script.execute: publish_full_state
+
+binary_sensor: 
+  - platform: template # Or your platform, may be a switch if you have active control over the heat pump
+    name: "Drying" # Used to report in MQTT if the dehumidifier is currently drying or idle
+    id: drying
+    lambda: |-
+      return true; // Replace with actual logic to determine if the dehumidifier is drying
+    on_state:
+      then:
+        - script.execute: publish_full_state
+
+  
+number: 
+  - platform: template
+    id: target_humidity
+    optimistic: true
+    name: "Target Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
+    min_value: 20.0
+    max_value: 80.0
+    restore_value: yes
+    initial_value: 55.0
+    step: 1.0
+    on_value:
+      then:
+        - script.execute: publish_full_state
+
+sensor:
+  - platform: <YOUR_SENSOR_PLATFORM> # Replace with your actual sensor platform, and set it properly
+    name: "Humidity"
+    id: humidity
+    on_value:
+      then:
+        - script.execute: publish_full_state
