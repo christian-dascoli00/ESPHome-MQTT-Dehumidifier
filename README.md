@@ -4,11 +4,13 @@ This project allows you to expose a dehumidifier as a native Home Assistant `hum
 
 This repository provides a workaround while waiting for native ESPHome support, tracked in [#6678](https://github.com/esphome/esphome/pull/6678). No extra configuration is needed in Home Assistant, except for a MQTT broker such as Mosquitto.
 
-This repository includes two versions:
+This repository includes two versions, with a third currently in development:
 
-- **minimal** — contains only the components needed to expose a dehumidifier entity to Home Assistant via MQTT discovery. It's up to you to build the logic or make these components interact with your dehumidifier. This is a fully customizable configuration to integrate your dehumidifier with Home Assistant.
+- **minimal** - contains only the components needed to expose a dehumidifier entity to Home Assistant via MQTT discovery, including mode support. The control logic and interaction with your actual dehumidifier are entirely up to you.
 
-- **standard** — designed for direct GPIO control of the heat pump and fan via relays. Includes full automation logic out of the box: humidity-based on/off control, defrost cycle, fan management, multiple modes (auto, laundry, ventilation), and support for an external humidity sensor and a tank full sensor. Note that it does not currently interface with the dehumidifier's display or button panel, but this can be added if needed. This version is more complex to customize. 
+- **intermediate** - currently in development. Replicates the behavior of `generic_hygrostat` in ESPHome, implementing humidity-based on/off control with two modes: auto (turns on/off based on target humidity) and always on (runs continuously regardless of humidity). Simply provide a switch to turn on when drying is needed and a humidity sensor.
+
+- **standard** — designed for direct GPIO control of the heat pump and fan via relays. Includes full automation logic out of the box: humidity-based on/off control, defrost cycle, fan management, multiple modes (auto, laundry, ventilation), and support for an external humidity sensor and a tank full sensor. Note that it does not currently interface with the dehumidifier's display and button panel, but this can be added if needed. This version is more complex to customize.
 
 > This project is provided as-is, without any warranty. Any use of this code and any modification to your dehumidifier are at your own risk. The author is not responsible for any damage. If your setup involves mains voltage (230V), be aware that working with it is dangerous and potentially lethal.
 
@@ -122,7 +124,7 @@ select:
 It is controlled in `mqtt/on_message.yaml` 
 
 ```yaml
-- topic: ${entity_id}/mode_command
+topic: ${entity_id}/mode_command
 ```
 
 and publishes its value in `mqtt/publish_state.yaml`
@@ -142,15 +144,15 @@ and its discovery in `mqtt/discovery.yaml`
 
 ### Drying - `binary_sensor`
 
-Used to report whether the dehumidifier is actively drying or just idle when turned on. Use the `lambda` to determine if the dehumidifier is drying, or replace with your own `platform` and remove the `lambda`. This component should represent the heat pump state. You may not have access to this information if you don't have direct control over the heat pump. In such case you can either remove this component or leave it with `return true`. If you do control the heat pump, this may be a `switch` instead.
+Used to report whether the dehumidifier is actively drying or just idle when turned on. Use the `lambda` to determine if the dehumidifier is drying, or replace with your own `platform` and remove the `lambda`. This component should represent the heat pump state. You may not have access to this information if you don't have direct control over the heat pump. In such case you can either remove this component or leave it with `return true`. If you do control the heat pump (when drying or not), this may be a `switch` instead.
 
 ```yaml
 binary_sensor:
-  - platform: template  # Or your platform, may be a switch if you have active control over the heat pump
+  - platform: template
     name: "Drying"
     id: drying
     lambda: |-
-      return true; // Replace with actual logic to determine if the dehumidifier is drying
+      return true; // Replace with actual logic
 ```
 
 It publishes its state in `mqtt/publish_state.yaml`
