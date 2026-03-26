@@ -32,7 +32,7 @@ mqtt:
 
 
 esphome:
-  name: test-dehu
+  name: dehumidifier
   on_boot:
     - priority: -100
       then:
