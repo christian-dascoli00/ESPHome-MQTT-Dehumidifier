@@ -1,0 +1,35 @@
+script:
+  - id: apply_logic
+    mode: queued
+    then:
+      - if:
+          condition:
+            switch.is_on: state
+          then:
+            - if:
+                condition:
+                  lambda: |-
+                    float hum = id(humidity).state;
+                    float target = id(target_humidity).state;
+                    std::string current_mode = id(mode).current_option();
+                    return current_mode == "auto" && hum > (target + ${humidity_deadband}f);
+                then:
+                  - switch.turn_on: drying
+            - if:
+                condition:
+                  lambda: |-
+                    float hum = id(humidity).state;
+                    float target = id(target_humidity).state;
+                    std::string current_mode = id(mode).current_option();
+                    return current_mode == "auto" && hum < (target - ${humidity_overrun}f);
+                then:
+                  - switch.turn_off: drying
+            - if:
+                condition:
+                  lambda: 'return id(mode).current_option() == "always on";'
+                then:
+                  - switch.turn_on: drying
+          else:
+            - switch.turn_off: drying
+
+      - script.execute: publish_full_state

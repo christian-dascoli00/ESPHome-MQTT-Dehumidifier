@@ -1,0 +1,25 @@
+script:
+  - id: publish_discovery
+    then:
+      - mqtt.publish:
+          topic: homeassistant/humidifier/${entity_mqtt_name}/config
+          retain: true
+          payload: !lambda |-
+            return R"JSON({
+                  "state_topic":                   "${entity_mqtt_name}/state",
+                  "command_topic":                 "${entity_mqtt_name}/command",
+                  "mode_state_topic":              "${entity_mqtt_name}/mode_state",
+                  "mode_command_topic":            "${entity_mqtt_name}/mode_command",
+                  "modes":                         ["auto", "always on"],
+                  "current_humidity_topic":        "${entity_mqtt_name}/current_hum",
+                  "target_humidity_state_topic":   "${entity_mqtt_name}/target_hum_state",
+                  "target_humidity_command_topic": "${entity_mqtt_name}/target_hum_cmd",
+                  "action_topic":                  "${entity_mqtt_name}/action",
+
+                  "availability_topic":            "${entity_mqtt_name}/status",
+                  "unique_id":                     "${entity_id}",
+                  "device_class":                  "dehumidifier",
+                  "name":                          "${entity_name}",
+                  "min_humidity": 20,
+                  "max_humidity": 80
+            })JSON";

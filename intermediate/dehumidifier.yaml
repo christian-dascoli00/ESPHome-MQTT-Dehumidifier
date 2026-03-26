@@ -1,0 +1,51 @@
+substitutions:
+
+  entity_mqtt_name: <YOUR_ENTITY_MQTT_NAME>
+  entity_id: <YOUR_ENTITY_ID>
+  entity_name: <YOUR_ENTITY_NAME>
+
+  sensor: <YOUR_SENSOR_HUMIDITY_ID> # e.g. humidity
+
+  drying_switch_id: <YOUR_DRYING_SWITCH_ID> # e.g. drying
+
+  # Histeresis settings for auto mode, the 
+  # dehumidifier will turn on when humidity is above (target + deadband)
+  # and turn off when humidity is below (target - deadband)
+  # Adjust to your liking
+  humidity_deadband: 3.0 # e.g. 3.0, please keep .0
+  humidity_overrun: 3.0 # e.g. 3.0, please keep .0
+
+
+
+# Your humidity sensor: e.g.
+# Make sure to call script.execute: apply_logic in the on_value section of the sensor
+
+#sensor:
+#  - platform: shtcx
+#    update_interval: 60s
+#    humidity:
+#      name: "Humidity"
+#      id: humidity
+#      on_value:
+#        then:
+#          - script.execute: apply_logic
+          
+
+
+# Your drying switch: e.g.
+
+# switch:
+#   - platform: gpio
+#     id: drying
+#     pin:
+#       number: GPIO27
+#       inverted: true
+
+
+
+packages:
+  - !include packages/mqtt/discovery.yaml
+  - !include packages/mqtt/publish_state.yaml
+  - !include packages/config.yaml
+  - !include packages/logic.yaml
+  - !include packages/components.yaml

@@ -1,0 +1,42 @@
+select:
+  - platform: template
+    name: "Dehumidifier Mode"
+    id: mode
+    optimistic: true
+    options:
+      - "auto"
+      - "always on"
+    initial_option: "auto"
+    restore_value: yes
+    on_value:
+      then:
+        - script.execute: apply_logic
+
+
+
+switch:
+  - platform: template
+    id: state
+    name: "Dehumidifier State"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_state:
+      - script.execute: apply_logic
+
+
+
+number: 
+  - platform: template
+    id: target_humidity
+    optimistic: true
+    name: "Target Humidity"
+    device_class: humidity
+    unit_of_measurement: "%"
+    min_value: 20.0
+    max_value: 80.0
+    restore_value: yes
+    initial_value: 55.0
+    step: 1.0
+    on_value:
+      then:
+        - script.execute: apply_logic

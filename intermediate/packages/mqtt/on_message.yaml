@@ -1,0 +1,25 @@
+# ON / OFF
+- topic: ${entity_id}/command
+  then:
+    - switch.control:
+        id: state
+        state: !lambda |-
+          return x == "ON";
+
+
+# Mode
+- topic: ${entity_id}/mode_command
+  then:
+    - lambda: |-
+        id(mode).make_call().set_option(x).perform();
+
+
+
+# Target humidity
+- topic: ${entity_id}/target_hum_cmd
+  then:
+    - lambda: |-
+        float val = atof(x.c_str());
+        if (val < 0.0f) val = 20.0f;
+        if (val > 100.0f) val = 80.0f;
+        id(target_humidity).make_call().set_value(val).perform();
