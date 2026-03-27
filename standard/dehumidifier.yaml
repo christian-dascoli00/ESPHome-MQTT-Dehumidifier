@@ -10,10 +10,10 @@ substitutions:
 
   # Histeresis settings for auto mode, the 
   # dehumidifier will turn on when humidity is above (target + deadband)
-  # and turn off when humidity is below (target - deadband)
+  # and turn off when humidity is below (target - overrun)
   # Adjust to your liking
-  humidity_deadband: 3.0 # e.g. 3.0, please keep .0
-  humidity_overrun: 3.0 # e.g. 3.0, please keep .0
+  humidity_deadband: 3 # please use an interger
+  humidity_overrun: 3 # please use an interger
 
 
 

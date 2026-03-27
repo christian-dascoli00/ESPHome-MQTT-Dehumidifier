@@ -12,7 +12,7 @@ script:
                     float hum = id(humidity).state;
                     float target = id(target_humidity).state;
                     std::string current_mode = id(mode).current_option();
-                    return current_mode == "auto" && hum > (target + ${humidity_deadband}f);
+                    return current_mode == "auto" && hum > (target + ${humidity_deadband}.0f);
                 then:
                   - switch.turn_on: drying
             - if:
@@ -21,7 +21,7 @@ script:
                     float hum = id(humidity).state;
                     float target = id(target_humidity).state;
                     std::string current_mode = id(mode).current_option();
-                    return current_mode == "auto" && hum < (target - ${humidity_overrun}f);
+                    return current_mode == "auto" && hum < (target - ${humidity_overrun}.0f);
                 then:
                   - switch.turn_off: drying
             - if:
