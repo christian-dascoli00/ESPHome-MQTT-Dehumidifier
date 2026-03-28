@@ -1,18 +1,85 @@
 # ESPHome Dehumidifier — Home Assistant MQTT Integration
 
-This project allows you to expose a dehumidifier as a native Home Assistant `humidifier` entity via MQTT discovery, using ESPHome. This gives you a proper dehumidifier entity in Home Assistant, with full support for the [**humidifier card**](https://www.home-assistant.io/dashboards/humidifier/) (just like the `generic_hygrostat` [integration](https://www.home-assistant.io/integrations/generic_hygrostat/) in Home Assistant), target humidity control, mode selection, and current humidity display. The individual components are not exposed as separate entities in Home Assistant, only a single `humidifier` entity is visible.
+This project allows you to expose a dehumidifier as a single native Home Assistant `humidifier` entity via MQTT discovery, using ESPHome. This gives you a proper dehumidifier entity in Home Assistant, with full support for the [**humidifier card**](https://www.home-assistant.io/dashboards/humidifier/) (just like the [`generic_hygrostat`](https://www.home-assistant.io/integrations/generic_hygrostat/) integration in Home Assistant), target humidity control, mode selection, and current humidity readout. No extra configuration is needed in Home Assistant, except for a MQTT broker such as Mosquitto.
 
-This repository provides a workaround while waiting for native ESPHome support, tracked in [#6678](https://github.com/esphome/esphome/pull/6678). No extra configuration is needed in Home Assistant, except for a MQTT broker such as Mosquitto.
+<p align="center">
+  <img height="400" alt="screen" src="image/image.png" />
+</p>
 
-This repository includes two versions, with a third currently in development:
+This repository provides a workaround while waiting for native ESPHome support, tracked in [#6678](https://github.com/esphome/esphome/pull/6678).
 
-- **minimal** - contains only the components needed to expose a dehumidifier entity to Home Assistant via MQTT discovery, including mode support. The control logic and interaction with your actual dehumidifier are entirely up to you.
+If the entity doesn't show up in the MQTT entities list, try reloading the MQTT integration.
 
-- **intermediate** - currently in development. Replicates the behavior of `generic_hygrostat` in ESPHome, implementing humidity-based on/off control with two modes: auto (turns on/off based on target humidity) and always on (runs continuously regardless of humidity). Simply provide a switch to turn on when drying is needed and a humidity sensor.
+Versions:
 
-- **standard** — designed for direct GPIO control of the heat pump and fan via relays. Includes full automation logic out of the box: humidity-based on/off control, defrost cycle, fan management, multiple modes (auto, laundry, ventilation), and support for an external humidity sensor and a tank full sensor. Note that it does not currently interface with the dehumidifier's display and button panel, but this can be added if needed. This version is more complex to customize.
+- **standard** (<u>recommended</u>) - replicates the `generic_hygrostat` behavior from ESPHome. It controls the device based on humidity, with two modes:
+  - Auto - turns the device on or off automatically to maintain a target humidity level;
+  - Always on - keeps the device running continuously, regardless of humidity Simply provide a switch to turn on when drying is needed and a humidity sensor. 
 
-> This project is provided as-is, without any warranty. Any use of this code and any modification to your dehumidifier are at your own risk. The author is not responsible for any damage. If your setup involves mains voltage (230V), be aware that working with it is dangerous and potentially lethal.
+  Use this version if you have the ability to control when the dehumidifier should turn on or off (e.g. through a smart plug, acting on the control panel). If you control directly the heat pump, consider using the full featured version.
+
+- **minimal** - contains only the components needed to expose a dehumidifier entity to Home Assistant, including customizable mode support, and MQTT communication. The control logic is entirely up to you.
+
+- **full featured** - designed for direct GPIO control of the heat pump and fan via relays, bypassing the dehumidifier's built-in logic and protections (tank full detection, defrost cycle), which are reimplemented by the integration (see disclaimer below). Includes full automation logic out of the box: humidity-based on/off control, defrost cycle (it's just a timer!), fan management, multiple modes (auto, laundry - always on, ventilation), and support for an external humidity sensor and a tank full sensor. Requires the following controls:
+  - Relay: heat pump ON/OFF
+  - Relay: fan ON/OFF
+  - Relay: switch between high/low fan speed
+
+
+> This project is provided as-is, without any warranty. Any use of this code and any modification to your dehumidifier are at your own risk. The author is not responsible for any damage or malfunction. If your setup involves high voltage, be aware that working with it is dangerous and potentially lethal.
+
+---
+
+## Standard Version
+
+This version replicates the behavior of `generic_hygrostat` in ESPHome.
+
+Fill the `secrets.yaml` file and the substitutions in `dehumidifier.yaml`.
+
+Provide the configuration of your humidity sensor in `dehumidifier.yaml`. Please keep the `on_value: ...` setting.  Be sure to use the same ID that you substituted for `<YOUR_SENSOR_HUMIDITY_ID>`.
+
+```yaml
+sensor:
+  - platform: ...
+    name: "Humidity"
+    id: humidity
+    on_value: 
+      then:
+        - script.execute: apply_logic
+```
+
+For example, in case of `shtcx` (I2C configuration required, see [shtcx](https://esphome.io/components/sensor/shtcx/) and [I2C](https://esphome.io/components/i2c/)) use the configuration
+
+```yaml
+sensor:
+  - platform: shtcx
+    update_interval: 60s
+    humidity:
+      name: "Humidity"
+      id: humidity
+      on_value:
+        then:
+          - script.execute: apply_logic
+```
+
+Provide the drying control switch. Be sure to use the same ID that you substituted for `<YOUR_DRYING_SWITCH_ID>`.
+
+```yaml
+ switch:
+   - platform: ...
+     id: drying
+```
+
+For example, if you control a relay, your configuration may be
+
+```yaml
+ switch:
+   - platform: gpio
+     id: drying
+     pin:
+       number: GPIO27
+       inverted: true
+```
 
 ---
 
@@ -21,8 +88,6 @@ This repository includes two versions, with a third currently in development:
 Fill the `secrets.yaml` file and the substitutions in `dehumidifier.yaml`.
 
 Depending on what you want to expose in Home Assistant (humidity, humidity target, modes, etc), follow the instructions below. If you don't need to expose some of the components, remove them from `dehumidifier.yaml` and remove the corresponding entries in `mqtt/on_message.yaml`, `mqtt/publish_state.yaml`, and `mqtt/discovery.yaml`. All of them are optional (see [MQTT Humidifier](https://www.home-assistant.io/integrations/humidifier.mqtt/)).
-
----
 
 ### State -  `switch` 
 
@@ -58,7 +123,6 @@ and its discovery in `mqtt/discovery.yaml`
 "state_topic": "${entity_id}/state"
 ```
 
----
 
 ### Current Humidity - `sensor` 
 
@@ -96,7 +160,6 @@ sensor:
       on_value: ...
 ```
 
----
 
 ### Mode -`select`
 
@@ -140,7 +203,6 @@ and its discovery in `mqtt/discovery.yaml`
 "mode_command_topic": "${entity_id}/mode_command"
 ```
 
----
 
 ### Drying - `binary_sensor`
 
@@ -167,7 +229,6 @@ and its discovery in in `mqtt/discovery.yaml`
 "action_topic": "${entity_id}/action"
 ```
 
----
 
 ### Target Humidity - `number`
 
@@ -198,5 +259,3 @@ and its discovery in in `mqtt/discovery.yaml`
 "target_humidity_state_topic": "${entity_id}/target_hum_state",
 "target_humidity_command_topic": "${entity_id}/target_hum_cmd"
 ```
-
----
