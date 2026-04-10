@@ -31,7 +31,7 @@ script:
                   "max_humidity": 80,
                   "mode_state_topic":              "dehumidifier/mode_state",
                   "mode_command_topic":            "dehumidifier/mode_command",
-                  "modes":                         ["auto", "laundry", "ventilation"],
+                  "modes":                         ["Auto", "Laundry", "Ventilation"],
                   "action_topic":                  "dehumidifier/action",
                   "optimistic":                    false
                 },
@@ -42,20 +42,28 @@ script:
                   "state_topic":   "dehumidifier/fan_speed_state",
                   "command_topic": "dehumidifier/fan_speed_cmd",
                   "icon":          "mdi:fan",
-                  "options":       ["low", "high"]
+                  "options":       ["Low", "High"]
+                },
+                "heat_pump_cmd": {
+                  "p":             "binary_sensor",
+                  "unique_id":     "heat_pump_cmd_${entity_id}",
+                  "name":          "Heat Pump Command",
+                  "state_topic":   "dehumidifier/heat_pump_state",
+                  "icon":          "mdi:heating-coil",
+                  "entity_category": "diagnostic"
                 },
                 "heat_pump": {
                   "p":             "binary_sensor",
                   "unique_id":     "heat_pump_${entity_id}",
                   "name":          "Heat Pump",
-                  "state_topic":   "dehumidifier/heat_pump_state",
+                  "state_topic":   "dehumidifier/heat_pump",
                   "icon":          "mdi:heating-coil",
                   "entity_category": "diagnostic"
                 },
-                "fan": {
+                "fan_cmd": {
                   "p":             "binary_sensor",
-                  "unique_id":     "fan_${entity_id}",
-                  "name":          "Fan",
+                  "unique_id":     "fan_cmd_${entity_id}",
+                  "name":          "Fan Command",
                   "state_topic":   "dehumidifier/fan_state",
                   "icon":          "mdi:fan",
                   "entity_category": "diagnostic"
@@ -82,6 +90,16 @@ script:
                   "device_class": "humidity",
                   "unit_of_measurement": "%",
                   "icon":          "mdi:water-percent",
+                  "entity_category": "diagnostic"
+                },
+                "temperature": {
+                  "p":             "sensor",
+                  "unique_id":     "temperature_${entity_id}",
+                  "name":          "Temperature Internal Sensor",
+                  "state_topic":   "dehumidifier/internal_temp",
+                  "device_class": "temperature",
+                  "unit_of_measurement": "°C",
+                  "icon":          "mdi:thermometer",
                   "entity_category": "diagnostic"
                 },
                 "use_external_humidity_sensor": {

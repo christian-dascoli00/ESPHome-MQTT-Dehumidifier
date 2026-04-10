@@ -76,12 +76,25 @@ switch:
 binary_sensor:
 
   - platform: template
-    id: heat_pump_state
+    id: heat_pump_running
     name: "Heat Pump"
     icon: "mdi:heating-coil"
     entity_category: diagnostic
     web_server:
       sorting_weight: 2
+    lambda: |-
+      return id(power).state > 50;
+    on_state:
+      then:
+        - mqtt.publish:
+            topic: dehumidifier/heat_pump
+            payload: !lambda 'return id(heat_pump_running).state ? "ON" : "OFF";'
+
+  - platform: template
+    id: heat_pump_state
+    name: "Heat Pump Command"
+    icon: "mdi:heating-coil"
+    entity_category: diagnostic
     lambda: |-
       if (id(heat_pump_raw).state) {
         return true;
@@ -94,7 +107,7 @@ binary_sensor:
     name: "Defrosting"
     icon: "mdi:snowflake"
     web_server:
-      sorting_weight: 7
+      sorting_weight: 8
 
   - platform: gpio
     id: tank_full
@@ -103,7 +116,7 @@ binary_sensor:
     filters:
       - delayed_off: 1200ms
     web_server:
-      sorting_weight: 8
+      sorting_weight: 9
     pin:
       number: ${tank_full_sensor}
       mode: INPUT_PULLUP

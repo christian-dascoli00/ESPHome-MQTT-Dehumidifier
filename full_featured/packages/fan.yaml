@@ -4,18 +4,18 @@ select:
     id: fan_speed
     icon: "mdi:fan-chevron-up"
     options:
-      - "low"
-      - "high"
+      - "Low"
+      - "High"
     web_server:
       sorting_weight: 2
     optimistic: true
-    initial_option: "high"
+    initial_option: "High"
     restore_value: yes
     on_value:
       then:
         - switch.control:
             id: fan_high
-            state: !lambda 'return x == "high";'
+            state: !lambda 'return x == "High";'
         - script.execute: publish_full_state
 
 
@@ -49,7 +49,7 @@ binary_sensor:
 
   - platform: template
     id: fan_state
-    name: "Fan"
+    name: "Fan Command"
     icon: "mdi:fan"
     web_server:
       sorting_weight: 3

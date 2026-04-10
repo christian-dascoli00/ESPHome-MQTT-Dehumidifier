@@ -16,6 +16,12 @@ sensor:
       on_value:
         then:
           - component.update: humidity
+    temperature:
+      name: "Internal Temperature"
+      id: internal_temperature
+      icon: "mdi:thermometer"
+      web_server:
+        sorting_weight: 5
 
   - platform: mqtt_subscribe
     id: external_humidity
@@ -24,23 +30,30 @@ sensor:
     device_class: humidity
     unit_of_measurement: "%"
     topic: dehumidifier/external_hum
+    on_value:
+      then:
+        - script.execute: external_humidity_watchdog
     web_server:
-      sorting_weight: 5
+      sorting_weight: 6
 
 
   - platform: template
     id: humidity
     lambda: |-
-      if (id(use_external_humidity_sensor).state) {
-        return id(external_humidity).state;
+      float external = id(external_humidity).state;
+      float internal = id(internal_humidity).state;
+      if (id(use_external_humidity_sensor).state && !isnan(external)) {
+        return external;
       } else {
-        return id(internal_humidity).state;
+        return internal;
       }
     on_value:
       then:
         - mqtt.publish:
             topic: dehumidifier/current_hum
-            payload: !lambda 'return to_string((int)roundf(x));'
+            payload: !lambda |-
+              if (isnan(x)) return std::string("None");
+              return to_string((int)roundf(x));
         - script.execute: apply_logic
         - script.execute: publish_full_state
 
@@ -51,7 +64,7 @@ switch:
     icon: "mdi:cog"
     optimistic: true
     web_server:
-      sorting_weight: 6
+      sorting_weight: 7
     entity_category: config
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
@@ -64,3 +77,11 @@ switch:
           topic: dehumidifier/use_external_humidity_sensor_state
           payload: "OFF"
       - component.update: humidity
+
+
+script:
+  - id: external_humidity_watchdog
+    mode: restart
+    then:
+      - delay: 2min
+      - switch.turn_off: use_external_humidity_sensor

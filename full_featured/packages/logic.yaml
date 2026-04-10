@@ -7,10 +7,10 @@ select:
     web_server:
       sorting_weight: 1
     options:
-      - "auto"
-      - "laundry"
-      - "ventilation"
-    initial_option: "auto"
+      - "Auto"
+      - "Laundry"
+      - "Ventilation"
+    initial_option: "Auto"
     restore_value: yes
     on_value:
       then:
@@ -81,6 +81,11 @@ script:
           // ── AUTO ──────────────────────────────────────────────────────────
 
           if (current_mode == "auto") {
+            if (isnan(hum)) {
+              id(heat_pump).turn_off();
+              id(fan).turn_off();
+              return;
+            }
             if (hum > (target + 3.0f)) {
               id(heat_pump).turn_on();
               id(fan).turn_on();
@@ -91,13 +96,13 @@ script:
           }
   
           // ── LAUNDRY (ALWAYS ON) ───────────────────────────────────────────
-          else if (current_mode == "laundry") {
+          else if (current_mode == "Laundry") {
             id(heat_pump).turn_on();
             id(fan).turn_on();
           }
   
           // ── VENTILATION ───────────────────────────────────────────────────
-          else if (current_mode == "ventilation") {
+          else if (current_mode == "Ventilation") {
             id(heat_pump).turn_off();
             id(fan).turn_on();
           }

@@ -31,6 +31,10 @@ script:
           payload: !lambda 'return id(heat_pump_raw).state ? "ON" : "OFF";'
 
       - mqtt.publish:
+          topic: dehumidifier/heat_pump
+          payload: !lambda 'return id(heat_pump_running).state ? "ON" : "OFF";'
+
+      - mqtt.publish:
           topic: dehumidifier/defrosting_state
           payload: !lambda 'return id(defrosting).state ? "ON" : "OFF";'
 
@@ -47,9 +51,18 @@ script:
           payload: !lambda 'return id(use_external_humidity_sensor).state ? "ON" : "OFF";'
 
       - mqtt.publish:
-          topic: dehumidifier/internal_hum
-          payload: !lambda 'return to_string((int)roundf(id(internal_humidity).state));'
+                topic: dehumidifier/internal_hum
+                payload: !lambda |-
+                    float hum = id(internal_humidity).state;
+                    if (isnan(hum)) return std::string("None");
+                    return to_string((int)roundf(hum));
+      - mqtt.publish:
+                topic: dehumidifier/internal_temp
+                payload: !lambda |-
+                    float temp = id(internal_temperature).state;
+                    if (isnan(temp)) return std::string("None");
+                    return to_string((int)roundf(temp));
 
       - mqtt.publish:
           topic: dehumidifier/tank_full_state
-          payload: !lambda 'return id(tank_full).state ? "ON" : "OFF";'
+          payload: !lambda 'return id(tank_full).state ? "ON" : "OFF";'      

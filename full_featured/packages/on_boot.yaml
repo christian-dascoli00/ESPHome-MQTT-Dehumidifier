@@ -1,7 +1,7 @@
 - priority: 300
   then:
     - lambda: |-
-        if (id(fan_speed).current_option() == "high") {
+        if (id(fan_speed).current_option() == "High") {
           id(fan_high).turn_on();
         } else {
           id(fan_high).turn_off();
