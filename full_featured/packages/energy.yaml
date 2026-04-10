@@ -1,0 +1,60 @@
+uart:
+  rx_pin: ${uart_rx}
+  tx_pin: ${uart_tx}
+  baud_rate: 9600
+
+modbus:
+
+sensor:
+  - platform: pzemac
+    current:
+      name: "Current"
+      id: current
+      web_server:
+        sorting_weight: 12
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/current
+              payload: !lambda 'return to_string(id(current).state);'
+    voltage:
+      name: "Voltage"
+      id: voltage
+      web_server:
+        sorting_weight: 13
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/voltage
+              payload: !lambda 'return to_string(id(voltage).state);'
+    energy:
+      name: "Energy"
+      id: energy
+      web_server:
+        sorting_weight: 11
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/energy
+              payload: !lambda 'return to_string(id(energy).state);'
+    power:
+      name: "Power"
+      id: power
+      web_server:
+        sorting_weight: 10
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/power
+              payload: !lambda 'return to_string(id(power).state);'
+    power_factor:
+      name: "Power Factor"
+      id: power_factor
+      web_server:
+        sorting_weight: 14
+      on_value:
+        then:
+          - mqtt.publish:
+              topic: dehumidifier/power_factor
+              payload: !lambda 'return to_string(id(power_factor).state);'
+    update_interval: 5s

@@ -118,6 +118,52 @@ script:
                   "name":          "Tank Full",
                   "state_topic":   "dehumidifier/tank_full_state",
                   "icon":          "mdi:format-color-fill"
+                },
+                "current": {
+                  "p":             "sensor",
+                  "unique_id":     "current_${entity_id}",
+                  "name":          "Current",
+                  "state_topic":   "dehumidifier/current",
+                  "device_class": "current",
+                  "unit_of_measurement": "A",
+                  "icon":          "mdi:current-ac"
+                },
+                "voltage": {
+                  "p":             "sensor",
+                  "unique_id":     "voltage_${entity_id}",
+                  "name":          "Voltage",
+                  "state_topic":   "dehumidifier/voltage",
+                  "device_class": "voltage",
+                  "unit_of_measurement": "V",
+                  "icon":          "mdi:flash"
+                },
+                "power": {
+                  "p":             "sensor",
+                  "unique_id":     "power_${entity_id}",
+                  "name":          "Power",
+                  "state_topic":   "dehumidifier/power",
+                  "device_class": "power",
+                  "unit_of_measurement": "W",
+                  "icon":          "mdi:flash"
+                },
+                "power_factor": {
+                  "p":             "sensor",
+                  "unique_id":     "power_factor_${entity_id}",
+                  "name":          "Power Factor",
+                  "unit_of_measurement": null,
+                  "state_topic":   "dehumidifier/power_factor",
+                  "device_class":  "power_factor",
+                  "icon":          "mdi:flash"
+                },
+                "energy": {
+                  "p":             "sensor",
+                  "unique_id":     "energy_${entity_id}",
+                  "name":          "Energy",
+                  "state_topic":   "dehumidifier/energy",
+                  "state_class":   "total_increasing",
+                  "device_class": "energy",
+                  "unit_of_measurement": "Wh",
+                  "icon":          "mdi:flash"
                 }
               }
             })JSON";
