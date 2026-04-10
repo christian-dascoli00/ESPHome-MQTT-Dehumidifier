@@ -32,6 +32,7 @@ sensor:
     topic: dehumidifier/external_hum
     on_value:
       then:
+        - component.update: humidity
         - script.execute: external_humidity_watchdog
     web_server:
       sorting_weight: 6

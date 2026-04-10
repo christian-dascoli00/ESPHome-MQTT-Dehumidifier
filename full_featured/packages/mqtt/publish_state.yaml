@@ -2,67 +2,72 @@ script:
   - id: publish_full_state
     then:
     
-      - mqtt.publish:
-          topic: dehumidifier/state
-          payload: !lambda 'return id(state).state ? "ON" : "OFF";'
- 
-      - mqtt.publish:
-          topic: dehumidifier/mode_state
-          payload: !lambda |-
-            return id(mode).current_option();
- 
-      - mqtt.publish:
-          topic: dehumidifier/target_hum_state
-          payload: !lambda 'return to_string((int)roundf(id(target_humidity).state));'
- 
-      - mqtt.publish:
-          topic: dehumidifier/fan_speed_state
-          payload: !lambda 'return id(fan_speed).current_option();'
+        - mqtt.publish:
+            topic: dehumidifier/state
+            payload: !lambda 'return id(state).state ? "ON" : "OFF";'
+    
+        - mqtt.publish:
+            topic: dehumidifier/mode_state
+            payload: !lambda |-
+              return id(mode).current_option();
 
-      - mqtt.publish:
-          topic: dehumidifier/action
-          payload: !lambda |-
-            if (!id(state).state) return std::string("off");
-            if (id(heat_pump).state) return std::string("drying");
-            return std::string("idle");
+        - mqtt.publish:
+            topic: dehumidifier/target_hum_state
+            payload: !lambda 'return to_string((int)roundf(id(target_humidity).state));'
 
-      - mqtt.publish:
-          topic: dehumidifier/heat_pump_state
-          payload: !lambda 'return id(heat_pump_raw).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/fan_speed_state
+            payload: !lambda 'return id(fan_speed).current_option();'   
 
-      - mqtt.publish:
-          topic: dehumidifier/heat_pump
-          payload: !lambda 'return id(heat_pump_running).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/action
+            payload: !lambda |-
+              if (!id(state).state) return std::string("off");
+              if (id(heat_pump).state) return std::string("drying");
+              return std::string("idle");
 
-      - mqtt.publish:
-          topic: dehumidifier/defrosting_state
-          payload: !lambda 'return id(defrosting).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/heat_pump_state
+            payload: !lambda 'return id(heat_pump_raw).state ? "ON" : "OFF";'
 
-      - mqtt.publish:
-          topic: dehumidifier/fan_state
-          payload: !lambda 'return id(fan_raw).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/heat_pump
+            payload: !lambda 'return id(heat_pump_running).state ? "ON" : "OFF";'
 
-      - mqtt.publish:
-          topic: dehumidifier/fan_forced_state
-          payload: !lambda 'return id(fan_forced).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/defrosting_state
+            payload: !lambda 'return id(defrosting).state ? "ON" : "OFF";'
 
-      - mqtt.publish:
-          topic: dehumidifier/use_external_humidity_sensor_state
-          payload: !lambda 'return id(use_external_humidity_sensor).state ? "ON" : "OFF";'
+        - mqtt.publish:
+            topic: dehumidifier/fan_state
+            payload: !lambda 'return id(fan_raw).state ? "ON" : "OFF";'
 
-      - mqtt.publish:
-                topic: dehumidifier/internal_hum
-                payload: !lambda |-
-                    float hum = id(internal_humidity).state;
-                    if (isnan(hum)) return std::string("None");
-                    return to_string((int)roundf(hum));
-      - mqtt.publish:
-                topic: dehumidifier/internal_temp
-                payload: !lambda |-
-                    float temp = id(internal_temperature).state;
-                    if (isnan(temp)) return std::string("None");
-                    return to_string((int)roundf(temp));
+        - mqtt.publish:
+            topic: dehumidifier/fan_forced_state
+            payload: !lambda 'return id(fan_forced).state ? "ON" : "OFF";'
 
-      - mqtt.publish:
-          topic: dehumidifier/tank_full_state
-          payload: !lambda 'return id(tank_full).state ? "ON" : "OFF";'      
+        - mqtt.publish:
+            topic: dehumidifier/use_external_humidity_sensor_state
+            payload: !lambda 'return id(use_external_humidity_sensor).state ? "ON" : "OFF";'
+
+        - mqtt.publish:
+            topic: dehumidifier/internal_hum
+            payload: !lambda |-
+                float hum = id(internal_humidity).state;
+                if (isnan(hum)) return std::string("None");
+                return to_string((int)roundf(hum));
+
+        - mqtt.publish:
+            topic: dehumidifier/internal_temp
+            payload: !lambda |-
+                float temp = id(internal_temperature).state;
+                if (isnan(temp)) return std::string("None");
+                return to_string((int)roundf(temp));
+
+        - mqtt.publish:
+            topic: dehumidifier/tank_full_state
+            payload: !lambda 'return id(tank_full).state ? "ON" : "OFF";'
+
+        - mqtt.publish:
+            topic: dehumidifier/suppress_state
+            payload: !lambda 'return id(suppress).state ? "ON" : "OFF";'

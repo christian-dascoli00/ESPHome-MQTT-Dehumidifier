@@ -119,6 +119,15 @@ script:
                   "state_topic":   "dehumidifier/tank_full_state",
                   "icon":          "mdi:format-color-fill"
                 },
+                "suppress": {
+                  "p":             "switch",
+                  "unique_id":     "suppress_heat_pump_${entity_id}",
+                  "name":          "Suppress Heat Pump",
+                  "state_topic":   "dehumidifier/suppress_state",
+                  "command_topic": "dehumidifier/suppress_cmd",
+                  "icon":          "mdi:sword-cross",
+                  "entity_category": "config"
+                },
                 "current": {
                   "p":             "sensor",
                   "unique_id":     "current_${entity_id}",

@@ -80,7 +80,7 @@ script:
   
           // ── AUTO ──────────────────────────────────────────────────────────
 
-          if (current_mode == "auto") {
+          if (current_mode == "Auto") {
             if (isnan(hum)) {
               id(heat_pump).turn_off();
               id(fan).turn_off();

@@ -47,3 +47,12 @@
 - topic: dehumidifier/external_hum
   then:
     - component.update: humidity
+
+
+# Suppress heat pump
+- topic: dehumidifier/suppress_cmd
+  then:
+    - switch.control:
+        id: suppress
+        state: !lambda |-
+          return x == "ON";

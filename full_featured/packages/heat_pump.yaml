@@ -32,8 +32,9 @@ switch:
     id: heat_pump
     turn_on_action:
       - if:
-          condition:
-            binary_sensor.is_off: tank_full
+          all:
+            - binary_sensor.is_off: tank_full
+            - switch.is_off: suppress
           then:
             - switch.template.publish:
                 id: heat_pump
@@ -72,6 +73,19 @@ switch:
                   binary_sensor.is_off: defrosting
                 then:
                   - script.stop: defrost
+
+  - platform: template
+    id: suppress
+    name: "Suppress Heat Pump"
+    icon: "mdi:sword-cross"
+    entity_category: config
+    optimistic: true
+    on_turn_on:
+      - switch.turn_off: heat_pump
+      - script.execute: publish_full_state
+    on_turn_off:
+      - script.execute: apply_logic
+      - script.execute: publish_full_state
 
 binary_sensor:
 
