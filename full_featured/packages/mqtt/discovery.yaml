@@ -112,6 +112,13 @@ script:
                   "icon":          "mdi:cog",
                   "entity_category": "config"
                 },
+                "using_external_humidity_sensor": {
+                  "p":             "binary_sensor",
+                  "unique_id":     "using_external_humidity_sensor_${entity_id}",
+                  "name":          "Using External Humidity Sensor",
+                  "state_topic":   "dehumidifier/using_external_humidity_sensor_state",
+                  "entity_category": "diagnostic"
+                },
                 "tank_full": {
                   "p":             "binary_sensor",
                   "unique_id":     "tank_full_${entity_id}",

@@ -41,12 +41,10 @@ sensor:
   - platform: template
     id: humidity
     lambda: |-
-      float external = id(external_humidity).state;
-      float internal = id(internal_humidity).state;
-      if (id(use_external_humidity_sensor).state && !isnan(external)) {
-        return external;
+      if (id(using_external_humidity_sensor).state) {
+        return id(external_humidity).state;
       } else {
-        return internal;
+        return id(internal_humidity).state;
       }
     on_value:
       then:
@@ -64,25 +62,45 @@ switch:
     name: "Use External Sensor"
     icon: "mdi:cog"
     optimistic: true
-    web_server:
-      sorting_weight: 7
     entity_category: config
     restore_mode: RESTORE_DEFAULT_OFF
-    on_turn_on:
+    on_state:
       - mqtt.publish:
           topic: dehumidifier/use_external_humidity_sensor_state
-          payload: "ON"
-      - component.update: humidity
-    on_turn_off:
+          payload: !lambda 'return x ? "ON" : "OFF";'
+
+binary_sensor:
+
+  - platform: template
+    id: availability_external_humidity_sensor
+    name: "Availability External Humidity Sensor"
+    icon: "mdi:check-circle-outline"
+    entity_category: diagnostic
+
+  - platform: template
+    id: using_external_humidity_sensor
+    name: "Using External Humidity Sensor"
+    icon: "mdi:check-circle-outline"
+    entity_category: diagnostic
+    lambda: |-
+      return id(use_external_humidity_sensor).state        &&
+        !isnan(id(external_humidity).state)              &&
+        id(availability_external_humidity_sensor).state;
+    on_state:
       - mqtt.publish:
-          topic: dehumidifier/use_external_humidity_sensor_state
-          payload: "OFF"
-      - component.update: humidity
+          topic: dehumidifier/using_external_humidity_sensor_state
+          payload: !lambda 'return x ? "ON" : "OFF";'
+
 
 
 script:
   - id: external_humidity_watchdog
     mode: restart
     then:
+      - binary_sensor.template.publish:
+          id: availability_external_humidity_sensor
+          state: true
       - delay: 2min
-      - switch.turn_off: use_external_humidity_sensor
+      - binary_sensor.template.publish:
+          id: availability_external_humidity_sensor
+          state: false

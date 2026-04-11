@@ -68,7 +68,9 @@ switch:
     turn_on_action:
       - if:
           condition:
-            binary_sensor.is_off: tank_full
+            lambda: |-
+              return !id(tank_full).state &&
+                (!id(suppress).state || id(mode).current_option() == "Ventilation");
           then:
             - switch.template.publish:
                 id: fan

@@ -82,6 +82,7 @@ switch:
     optimistic: true
     on_turn_on:
       - switch.turn_off: heat_pump
+      - switch.turn_off: fan
       - script.execute: publish_full_state
     on_turn_off:
       - script.execute: apply_logic
